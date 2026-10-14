@@ -92,7 +92,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
-LOGIN_REDIRECT_URL = 'portal'
+LOGIN_REDIRECT_URL = 'about'
 LOGOUT_REDIRECT_URL = 'login'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
