@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ category.title }} | Rekhaa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#eadfca; --paper-hi:#f3e9d6; --paper-lo:#e6d8be;
+  --ink:#780d10; --ink-btn:#7d1012; --ink-text:#5b0c0e;
+  --shadow:60,35,20;
+  --title:"Playfair Display",Georgia,serif;
+  --soft:"Cormorant Garamond",Georgia,serif;
+  --hand:"Caveat","Segoe Script",cursive;
+  --body:Georgia,"Times New Roman",serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;color:var(--ink-text);font-family:var(--body);
+  background:radial-gradient(ellipse at 50% 30%,var(--paper-hi) 0%,var(--paper-lo) 100%) fixed;background-color:var(--paper);
+  -webkit-font-smoothing:antialiased}
+svg.grain{position:fixed;inset:0;width:100%;height:100%;opacity:.5;mix-blend-mode:multiply;pointer-events:none;z-index:0}
+main,header,footer{position:relative;z-index:1}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink-btn);outline-offset:3px;border-radius:12px}
+
+.top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;max-width:1080px;margin:0 auto;padding:14px 20px}
+.brand{display:flex;align-items:center;text-decoration:none;color:var(--ink);transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.brand:hover{transform:scale(1.04)}
+.brand img{display:block;height:48px;width:auto;max-width:190px;object-fit:contain}
+.top nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px}
+.top nav a{font-size:14px;text-decoration:none;padding:6px 16px;border-radius:20px;border:1px solid transparent;transition:border-color .25s,background .25s,transform .25s,box-shadow .25s}
+.top nav a:hover,.top nav a[aria-current]{border-color:var(--ink-btn);background:rgba(255,255,255,.45)}
+
+/* "Add +" button in the navbar (managers only) */
+.top nav a.add{display:inline-flex;align-items:center;gap:6px;margin-left:6px;background:var(--ink-btn);border-color:var(--ink-btn);color:var(--paper-hi)}
+.top nav a.add:hover{background:var(--ink-text);border-color:var(--ink-text);transform:translateY(-2px);box-shadow:0 8px 18px rgba(var(--shadow),.25)}
+.top nav a.add .plus{font-size:18px;line-height:1;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.top nav a.add:hover .plus{transform:rotate(90deg)}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+.btn{display:inline-block;font:15px var(--body);color:var(--ink-text);background:rgba(255,255,255,.45);border:1px solid var(--ink-btn);border-radius:20px;padding:8px 22px;text-decoration:none;cursor:pointer;transition:transform .25s,box-shadow .25s,background .25s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(var(--shadow),.22)}
+.btn.small{font-size:14px;padding:6px 20px}
+
+/* heading */
+.back{margin-top:6px}
+.intro{padding:clamp(18px,4vw,44px) 0 clamp(26px,4vw,44px);text-align:center}
+.intro h1{margin:0;font-family:var(--title);font-style:italic;font-weight:500;font-size:clamp(2.4rem,6.5vw,4.2rem);line-height:1.08;color:var(--ink);animation:settle 1s cubic-bezier(.2,.7,.2,1) both}
+.intro p{margin:12px auto 0;max-width:46ch;font-family:var(--hand);font-size:1.5rem;line-height:1.3;color:var(--ink);opacity:0;animation:settle .8s ease .5s forwards}
+.stroke{display:block;width:min(240px,60%);height:14px;margin:14px auto 0;overflow:visible}
+.stroke path{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.2s cubic-bezier(.5,0,.2,1) .9s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes settle{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* gallery: columns keep each painting in its own shape */
+.gallery{columns:4 210px;column-gap:20px;padding:6px 0 50px}
+.art{break-inside:avoid;margin:0 0 20px;border-radius:18px;overflow:hidden;background:rgba(255,255,255,.55);border:1px solid rgba(125,16,18,.25);box-shadow:0 12px 26px rgba(var(--shadow),.2);transition:transform .4s cubic-bezier(.2,.7,.2,1),box-shadow .4s;opacity:0;animation:settle .8s ease forwards;animation-delay:calc(1.1s + var(--i)*.1s)}
+.art:hover{transform:translateY(-6px);box-shadow:0 22px 38px rgba(var(--shadow),.3)}
+.zoom{display:block;width:100%;padding:0;border:0;background:var(--paper-lo);cursor:zoom-in;overflow:hidden}
+.zoom img{display:block;width:100%;height:auto;filter:sepia(.08) contrast(1.02);transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.art:hover .zoom img{transform:scale(1.05)}
+.info{padding:10px 14px 14px}
+.info h2{margin:0;font-family:var(--title);font-style:italic;font-weight:500;font-size:1.2rem;line-height:1.15;color:var(--ink)}
+
+.empty{text-align:center;padding:40px 0 70px;font-family:var(--title);font-style:italic;font-size:1.6rem}
+footer{text-align:center;font-size:13px;opacity:.7;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+
+/* enlarged view */
+dialog{border:0;padding:0;background:transparent;max-width:94vw;max-height:94vh;overflow:visible;color:var(--paper-hi);text-align:center}
+dialog::backdrop{background:rgba(38,6,8,.82);backdrop-filter:blur(3px)}
+dialog img,dialog video{display:block;max-width:92vw;max-height:64vh;margin:0 auto;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+dialog video{background:#000}
+dialog [hidden]{display:none !important}
+dialog .actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;margin-top:18px}
+dialog .watch,dialog .edit{color:var(--paper-hi);background:rgba(243,233,214,.12);border-color:rgba(243,233,214,.65)}
+dialog .watch:hover,dialog .edit:hover{background:rgba(243,233,214,.24)}
+dialog .btn.danger{color:#ffd9d4;background:rgba(163,20,15,.28);border-color:rgba(255,200,190,.75)}
+dialog .btn.danger:hover{background:rgba(163,20,15,.6)}
+dialog .cap{margin:14px 0 0;font-family:var(--title);font-style:italic;font-size:1.5rem}
+dialog .desc{margin:8px auto 0;max-width:60ch;font-family:var(--soft);font-style:italic;font-size:1.3rem;line-height:1.4;opacity:.92}
+dialog .desc:empty{display:none}
+dialog .x{position:absolute;top:-16px;right:-6px;width:40px;height:40px;border-radius:50%;border:0;background:var(--paper-hi);color:var(--ink);font-size:22px;line-height:1;cursor:pointer}
+
+@media (max-width:560px){
+  dialog img,dialog video{max-height:54vh}
+  .gallery{columns:2;column-gap:14px}
+  .top nav a{padding:6px 10px}
+  .top nav a.add{margin-left:2px}
+  .brand img{height:38px;max-width:140px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  .intro p,.art{opacity:1 !important}
+  .stroke path{stroke-dashoffset:0 !important}
+}
+</style>
+</head>
+<body>
+<svg class="grain" aria-hidden="true"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9 .12" numOctaves="4" seed="3"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .45  0 0 0 0 .32  0 0 0 .55 -.1"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+
+<header class="top">
+  <a class="brand" href="{% url 'lander' %}" aria-label="Rekhaa home">
+    <img src="{% get_media_prefix %}logo/logo.png" alt="Rekhaa">
+  </a>
+  <nav aria-label="Main">
+    <a href="{% url 'about' %}">About</a>
+    <a href="{% url 'category' %}">Categories</a>
+    <a href="#" aria-current="page">Paintings</a>
+    {% if user.is_authenticated  %}
+    <a class="add" href="{% url 'add_painting' category.pk %}" aria-label="Add a painting to {{ category.title }}">Add <span class="plus" aria-hidden="true">+</span></a>
+    {% endif %}
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="intro">
+    <h1>{{ category.title }}</h1>
+    <svg class="stroke" viewBox="0 0 240 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 8 C46 2 92 12 138 6 S210 4 237 8"/></svg>
+    {% if category.desc %}<p>{{ category.desc }}</p>{% endif %}
+  </section>
+
+  {% if paintings %}
+  <section class="gallery" aria-label="Paintings in {{ category.title }}">
+    {% for p in paintings %}
+    <article class="art" style="--i:{{ forloop.counter0 }}">
+      <button class="zoom" type="button" data-title="{{ p.title }}" data-desc="{{ p.desc }}" data-video="{% if p.video %}{{ p.video.url }}{% endif %}"{% if user.is_authenticated %} data-delete="{% url 'delete_painting' p.pk %}" data-edit="{% url 'edit_painting' p.pk %}"{% endif %} aria-label="View {{ p.title }} larger">
+        <img src="{{ p.image.url }}" alt="{{ p.title }}" loading="lazy">
+      </button>
+      <div class="info">
+        <h2>{{ p.title }}</h2>
+      </div>
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <p class="empty">No paintings in this collection yet.</p>
+  {% endif %}
+</main>
+
+<footer>&copy; {% now "Y" %} Rekhaa. All paintings belong to the artist.</footer>
+
+<dialog id="lb" aria-label="Enlarged painting">
+  <button class="x" type="button" aria-label="Close">&times;</button>
+  <img alt="">
+  <video controls playsinline preload="none" hidden></video>
+  <p class="cap"></p>
+  <p class="desc"></p>
+  <div class="actions">
+    <button class="btn watch" type="button" hidden>Watch video</button>
+
+    {# Delete link: only managers get it. The browser asks "Are you sure?" first. #}
+    {% if user.is_authenticated  %}
+    <a id="editLink" class="btn edit" href="#" hidden>Edit</a>
+    <a id="delLink" class="btn danger" href="#" hidden
+       onclick="return confirm('Delete this painting for good?');">Delete</a>
+    {% endif %}
+  </div>
+</dialog>
+
+<script>
+(function(){
+  var lb = document.getElementById('lb');
+  var img = lb.querySelector('img');
+  var vid = lb.querySelector('video');
+  var cap = lb.querySelector('.cap');
+  var desc = lb.querySelector('.desc');
+  var watch = lb.querySelector('.watch');
+
+  // the delete link (this is null when the visitor is not a manager)
+  var delLink = document.getElementById('delLink');
+
+  // the edit link (also null for visitors who are not managers)
+  var editLink = document.getElementById('editLink');
+
+  // show either the painting or its video
+  function show(mode){
+    var isVideo = (mode === 'video');
+    img.hidden = isVideo;
+    vid.hidden = !isVideo;
+    if (!isVideo) vid.pause();
+    watch.textContent = isVideo ? 'Back to painting' : 'Watch video';
+  }
+
+  document.querySelectorAll('.zoom').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var small = btn.querySelector('img');
+      img.src = small.src;
+      img.alt = small.alt;
+      cap.textContent = btn.dataset.title;
+      desc.textContent = btn.dataset.desc || '';
+
+      if (btn.dataset.video) {
+        vid.src = btn.dataset.video;
+        watch.hidden = false;
+      } else {
+        vid.removeAttribute('src');
+        vid.load();
+        watch.hidden = true;
+      }
+      show('image');
+
+      // delete: point the link at THIS painting's delete address
+      if (delLink && btn.dataset.delete) {
+        delLink.href = btn.dataset.delete;
+        delLink.hidden = false;
+      }
+      // edit: point the link at THIS painting's edit address
+      if (editLink && btn.dataset.edit) {
+        editLink.href = btn.dataset.edit;
+        editLink.hidden = false;
+      }
+      lb.showModal();
+    });
+  });
+
+  watch.addEventListener('click', function(){ show(vid.hidden ? 'video' : 'image'); });
+
+  // close with the button, or by clicking outside the picture (Esc works by default)
+  lb.querySelector('.x').addEventListener('click', function(){ lb.close(); });
+  lb.addEventListener('click', function(e){ if (e.target === lb) lb.close(); });
+  lb.addEventListener('close', function(){ vid.pause(); });
+
+})();
+</script>
+</body>
+</html>

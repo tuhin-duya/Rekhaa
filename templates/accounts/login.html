@@ -1,0 +1,157 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Log in | Rekhaa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#eadfca; --paper-hi:#f3e9d6; --paper-lo:#e6d8be;
+  --ink:#780d10; --ink-btn:#7d1012; --ink-text:#5b0c0e;
+  --shadow:60,35,20;
+  --title:"Playfair Display",Georgia,serif;
+  --soft:"Cormorant Garamond",Georgia,serif;
+  --hand:"Caveat","Segoe Script",cursive;
+  --body:Georgia,"Times New Roman",serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%}
+body{margin:0;min-height:100%;display:flex;flex-direction:column;color:var(--ink-text);font-family:var(--body);
+  background:radial-gradient(ellipse at 50% 30%,var(--paper-hi) 0%,var(--paper-lo) 100%) fixed;background-color:var(--paper);
+  -webkit-font-smoothing:antialiased}
+svg.grain{position:fixed;inset:0;width:100%;height:100%;opacity:.5;mix-blend-mode:multiply;pointer-events:none;z-index:0}
+main,footer{position:relative;z-index:1}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink-btn);outline-offset:3px;border-radius:12px}
+
+main{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 20px 10px}
+
+/* logo above the card */
+.brand{display:block;margin:0 0 6px;transition:transform .3s cubic-bezier(.2,.7,.2,1);animation:settle .9s cubic-bezier(.2,.7,.2,1) both}
+.brand:hover{transform:scale(1.04)}
+.brand img{display:block;height:64px;width:auto;max-width:240px;object-fit:contain}
+
+/* heading */
+.intro{text-align:center;padding:6px 0 22px}
+.intro h1{margin:0;font-family:var(--title);font-style:italic;font-weight:500;font-size:clamp(2.2rem,6vw,3.2rem);line-height:1.1;color:var(--ink);animation:settle 1s cubic-bezier(.2,.7,.2,1) .1s both}
+.intro p{margin:8px auto 0;font-family:var(--hand);font-size:1.5rem;color:var(--ink);opacity:0;animation:settle .8s ease .4s forwards}
+.stroke{display:block;width:min(200px,55%);height:14px;margin:10px auto 0;overflow:visible}
+.stroke path{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.2s cubic-bezier(.5,0,.2,1) .7s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes settle{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* the form card */
+.sheet{width:100%;max-width:420px;padding:30px 28px 26px;background:rgba(255,255,255,.45);border:1px solid rgba(125,16,18,.3);border-radius:26px;box-shadow:0 18px 38px rgba(var(--shadow),.16);opacity:0;animation:settle .9s ease .5s forwards}
+.field{margin:0 0 20px}
+.field label.t{display:block;margin:0 0 7px 4px;font-family:var(--title);font-style:italic;font-size:1.15rem;color:var(--ink)}
+.field input[type=text],.field input[type=password]{display:block;width:100%;font:16px var(--body);color:var(--ink-text);background:rgba(255,255,255,.6);border:1px solid rgba(125,16,18,.4);border-radius:16px;padding:12px 16px;transition:border-color .25s,box-shadow .25s,background .25s}
+.field input:focus{outline:none;border-color:var(--ink-btn);background:#fff;box-shadow:0 0 0 4px rgba(125,16,18,.12)}
+.pw{position:relative}
+.pw input{padding-right:70px !important}
+.pw button{position:absolute;right:8px;top:50%;transform:translateY(-50%);padding:6px 12px;border:0;border-radius:14px;background:none;font:13px var(--body);color:var(--ink-text);cursor:pointer;opacity:.75;transition:opacity .2s,background .2s}
+.pw button:hover{opacity:1;background:rgba(125,16,18,.08)}
+.err{margin:6px 0 0 4px;font-size:14px;color:#a3140f}
+.errbox{margin:0 0 20px;padding:12px 16px;border:1px solid #a3140f;border-radius:14px;background:rgba(163,20,15,.07);font-size:14px;color:#a3140f}
+
+.btn{display:block;width:100%;font:16px var(--body);color:var(--paper-hi);background:var(--ink-btn);border:1px solid var(--ink-btn);border-radius:22px;padding:11px 26px;cursor:pointer;transition:transform .25s,box-shadow .25s,background .25s,opacity .25s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(var(--shadow),.25)}
+.btn:disabled{opacity:.7;cursor:progress;transform:none;box-shadow:none}
+
+.back{margin:20px 0 0;text-align:center;font-size:14px;opacity:.75}
+.back a{text-decoration:none;border-bottom:1px solid rgba(125,16,18,.4)}
+.back a:hover{opacity:1;border-bottom-color:var(--ink-btn)}
+
+footer{text-align:center;font-size:13px;opacity:.7;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+
+@media (max-width:560px){
+  .sheet{padding:24px 20px 22px;border-radius:22px}
+  .brand img{height:54px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  .intro p,.sheet{opacity:1 !important}
+  .stroke path{stroke-dashoffset:0 !important}
+}
+</style>
+</head>
+<body>
+<svg class="grain" aria-hidden="true"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9 .12" numOctaves="4" seed="3"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .45  0 0 0 0 .32  0 0 0 .55 -.1"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+
+<main>
+  <a class="brand" href="{% url 'lander' %}" aria-label="Rekhaa home">
+    <img src="{% get_media_prefix %}logo/logo.png" alt="Rekhaa">
+  </a>
+
+  <section class="intro">
+    <h1>Welcome back</h1>
+    <svg class="stroke" viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 8 C38 2 78 12 116 6 S170 4 197 8"/></svg>
+    <p>the studio door</p>
+  </section>
+
+  <form class="sheet" method="post">
+    {% csrf_token %}
+    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+
+    {# Wrong username or password shows up here #}
+    {% if form.non_field_errors %}
+      <div class="errbox" role="alert">{% for e in form.non_field_errors %}{{ e }} {% endfor %}</div>
+    {% endif %}
+
+    <div class="field">
+      <label class="t" for="{{ form.username.id_for_label }}">Username</label>
+      {{ form.username }}
+      {% for e in form.username.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="field">
+      <label class="t" for="{{ form.password.id_for_label }}">Password</label>
+      <div class="pw">
+        {{ form.password }}
+        <button type="button" id="showPw" aria-label="Show password">Show</button>
+      </div>
+      {% for e in form.password.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+
+    <button class="btn" type="submit" id="go">Log in</button>
+  </form>
+
+  <p class="back"><a href="{% url 'about' %}">Back to the gallery</a></p>
+</main>
+
+<footer>&copy; {% now "Y" %} Rekhaa</footer>
+
+<script>
+(function(){
+  var user = document.getElementById('id_username');
+  var pass = document.getElementById('id_password');
+  var show = document.getElementById('showPw');
+  var form = document.querySelector('form.sheet');
+
+  if (user) { user.placeholder = 'Your username'; user.focus(); }
+  if (pass) pass.placeholder = 'Your password';
+
+  // show or hide the password while typing
+  show.addEventListener('click', function(){
+    var hidden = pass.type === 'password';
+    pass.type = hidden ? 'text' : 'password';
+    show.textContent = hidden ? 'Hide' : 'Show';
+    show.setAttribute('aria-label', hidden ? 'Hide password' : 'Show password');
+  });
+
+  // stop double clicks while logging in
+  form.addEventListener('submit', function(){
+    var btn = document.getElementById('go');
+    setTimeout(function(){ btn.disabled = true; btn.textContent = 'Logging in...'; }, 0);
+  });
+})();
+</script>
+</body>
+</html>

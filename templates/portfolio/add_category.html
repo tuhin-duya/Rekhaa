@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{% if editing %}Edit category{% else %}Add a category{% endif %} | Rekhaa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#eadfca; --paper-hi:#f3e9d6; --paper-lo:#e6d8be;
+  --ink:#780d10; --ink-btn:#7d1012; --ink-text:#5b0c0e;
+  --shadow:60,35,20;
+  --title:"Playfair Display",Georgia,serif;
+  --soft:"Cormorant Garamond",Georgia,serif;
+  --hand:"Caveat","Segoe Script",cursive;
+  --body:Georgia,"Times New Roman",serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;color:var(--ink-text);font-family:var(--body);
+  background:radial-gradient(ellipse at 50% 30%,var(--paper-hi) 0%,var(--paper-lo) 100%) fixed;background-color:var(--paper);
+  -webkit-font-smoothing:antialiased}
+svg.grain{position:fixed;inset:0;width:100%;height:100%;opacity:.5;mix-blend-mode:multiply;pointer-events:none;z-index:0}
+main,header,footer{position:relative;z-index:1}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink-btn);outline-offset:3px;border-radius:12px}
+
+/* top bar, same as the other pages */
+.top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;max-width:1080px;margin:0 auto;padding:14px 20px}
+.brand{display:flex;align-items:center;text-decoration:none;color:var(--ink);transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.brand:hover{transform:scale(1.04)}
+.brand img{display:block;height:48px;width:auto;max-width:190px;object-fit:contain}
+.top nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px}
+.top nav a{font-size:14px;text-decoration:none;padding:6px 16px;border-radius:20px;border:1px solid transparent;transition:border-color .25s,background .25s}
+/* the box stays only on the page you are on */
+.top nav a[aria-current="page"]{border-color:var(--ink-btn);background:rgba(255,255,255,.45)}
+/* every link gets the box only while hovered (mouse devices only, so a tap on a phone never leaves it stuck) */
+@media (hover:hover){
+  .top nav a:hover{border-color:var(--ink-btn);background:rgba(255,255,255,.45)}
+  .top nav a[aria-current="page"]:hover{background:rgba(255,255,255,.7)}
+}
+
+.wrap{max-width:680px;margin:0 auto;padding:0 20px}
+
+.btn{display:inline-block;font:15px var(--body);color:var(--ink-text);background:rgba(255,255,255,.45);border:1px solid var(--ink-btn);border-radius:20px;padding:9px 26px;text-decoration:none;cursor:pointer;transition:transform .25s,box-shadow .25s,background .25s,opacity .25s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(var(--shadow),.22)}
+.btn.primary{background:var(--ink-btn);color:var(--paper-hi)}
+.btn.quiet{border-color:transparent;background:none;opacity:.8}
+.btn:disabled{opacity:.7;cursor:progress;transform:none;box-shadow:none}
+
+/* heading */
+.intro{padding:clamp(16px,4vw,40px) 0 26px;text-align:center}
+.intro h1{margin:0;font-family:var(--title);font-style:italic;font-weight:500;font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.1;color:var(--ink);animation:settle 1s cubic-bezier(.2,.7,.2,1) both}
+.intro p{margin:10px auto 0;font-family:var(--hand);font-size:1.5rem;color:var(--ink);opacity:0;animation:settle .8s ease .4s forwards}
+.stroke{display:block;width:min(220px,55%);height:14px;margin:12px auto 0;overflow:visible}
+.stroke path{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.2s cubic-bezier(.5,0,.2,1) .7s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes settle{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* the form card */
+.sheet{padding:30px 30px 26px;background:rgba(255,255,255,.45);border:1px solid rgba(125,16,18,.3);border-radius:26px;box-shadow:0 18px 38px rgba(var(--shadow),.16);opacity:0;animation:settle .9s ease .5s forwards}
+.field{margin:0 0 22px}
+.field .t{display:block;margin:0 0 7px 4px;font-family:var(--title);font-style:italic;font-size:1.2rem;color:var(--ink)}
+.opt{font-family:var(--body);font-style:normal;font-size:12px;opacity:.65;margin-left:6px}
+.field input[type=text],.field textarea{display:block;width:100%;font:16px var(--body);color:var(--ink-text);background:rgba(255,255,255,.6);border:1px solid rgba(125,16,18,.4);border-radius:16px;padding:12px 16px;transition:border-color .25s,box-shadow .25s,background .25s}
+.field textarea{height:110px;min-height:90px;resize:vertical;line-height:1.5}
+.field input[type=text]:focus,.field textarea:focus{outline:none;border-color:var(--ink-btn);background:#fff;box-shadow:0 0 0 4px rgba(125,16,18,.12)}
+.hint{margin:6px 0 0 4px;font-family:var(--soft);font-style:italic;font-size:1.05rem;opacity:.8}
+.err{margin:6px 0 0 4px;font-size:14px;color:#a3140f}
+.errbox{margin:0 0 20px;padding:12px 16px;border:1px solid #a3140f;border-radius:14px;background:rgba(163,20,15,.07);font-size:14px;color:#a3140f}
+
+/* upload box */
+.drop{position:relative;display:flex;align-items:center;justify-content:center;gap:16px;min-height:130px;padding:18px;text-align:center;border:2px dashed rgba(125,16,18,.5);border-radius:20px;background:rgba(255,255,255,.35);cursor:pointer;transition:background .25s,border-color .25s,transform .25s}
+.drop:hover,.drop.over{background:rgba(255,255,255,.65);border-color:var(--ink-btn)}
+.drop.over{transform:scale(1.015)}
+.drop:focus-within{outline:2px solid var(--ink-btn);outline-offset:3px}
+.drop input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.drop .say{font-family:var(--hand);font-size:1.5rem;line-height:1.1;color:var(--ink)}
+.drop .small{display:block;margin-top:4px;font-family:var(--body);font-size:13px;opacity:.7}
+.drop .fname{display:block;margin-top:6px;font-size:14px;word-break:break-all}
+.drop .thumb{display:none;width:84px;height:112px;object-fit:cover;border-radius:16px;box-shadow:0 8px 18px rgba(var(--shadow),.25)}
+.drop.has .thumb{display:block}
+.drop.has{border-style:solid}
+
+.actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:10px;margin-top:6px}
+
+footer{text-align:center;font-size:13px;opacity:.7;padding:30px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+
+@media (max-width:560px){
+  .sheet{padding:22px 18px 20px;border-radius:22px}
+  .top nav a{padding:6px 10px}
+  .brand img{height:38px;max-width:140px}
+  .actions{justify-content:stretch}
+  .actions .btn{flex:1;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  .intro p,.sheet{opacity:1 !important}
+  .stroke path{stroke-dashoffset:0 !important}
+}
+</style>
+</head>
+<body>
+<svg class="grain" aria-hidden="true"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9 .12" numOctaves="4" seed="3"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .45  0 0 0 0 .32  0 0 0 .55 -.1"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+
+<header class="top">
+  <a class="brand" href="{% url 'lander' %}" aria-label="Rekhaa home">
+    <img src="{% get_media_prefix %}logo/logo.png" alt="Rekhaa">
+  </a>
+  <nav aria-label="Main">
+    <a href="{% url 'about' %}">About</a>
+    <a href="{% url 'category' %}">Back to Categories</a>
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>{% if editing %}Edit category{% else %}Add a category{% endif %}</h1>
+    <svg class="stroke" viewBox="0 0 220 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 8 C42 2 86 12 128 6 S190 4 217 8"/></svg>
+    <p>{% if editing %}change what you like, then save{% else %}a new room for the paintings{% endif %}</p>
+  </section>
+
+  <form class="sheet" id="categoryForm" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="errbox">{% for e in form.non_field_errors %}{{ e }} {% endfor %}</div>
+    {% endif %}
+
+    <div class="field">
+      <label class="t" for="{{ form.title.id_for_label }}">Title</label>
+      {{ form.title }}
+      {% for e in form.title.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="field">
+      <label class="t" for="{{ form.desc.id_for_label }}">Description <span class="opt">optional</span></label>
+      {{ form.desc }}
+      <p class="hint">A short line shown on the category card and at the top of its page.</p>
+      {% for e in form.desc.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="field">
+      <span class="t">Cover image <span class="opt">optional</span></span>
+      {# The file input is written by hand so Django's "Currently / Clear / Change" markup never appears inside the box when editing #}
+      <label class="drop" for="{{ form.cover.id_for_label }}" data-current="{% if form.instance.cover %}{{ form.instance.cover.url }}{% endif %}">
+        <img class="thumb" alt="Preview of the chosen cover">
+        <span>
+          <span class="say">{% if form.instance.cover %}Drop a new cover here, or tap to replace it{% else %}Drop the cover here, or tap to choose{% endif %}</span>
+          <span class="small">JPG or PNG. A portrait picture fits the card best.</span>
+          <span class="fname"></span>
+        </span>
+        <input type="file" name="{{ form.cover.html_name }}" id="{{ form.cover.id_for_label }}" accept="image/*">
+      </label>
+      {% for e in form.cover.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="actions">
+      <a class="btn quiet" href="{% url 'category' %}">Cancel</a>
+      <button class="btn primary" type="submit" id="save">{% if editing %}Save changes{% else %}Save category{% endif %}</button>
+    </div>
+  </form>
+</main>
+
+<footer>&copy; {% now "Y" %} Rekhaa. All paintings belong to the artist.</footer>
+
+<script>
+(function(){
+  var form = document.getElementById('categoryForm');
+
+  // small helpers on the fields Django draws
+  var title = document.getElementById('id_title');
+  var desc = document.getElementById('id_desc');
+  if (title) title.placeholder = 'Name of the collection';
+  if (desc) desc.placeholder = 'A short line about this collection (optional)';
+
+  // upload box: show the file name and a thumbnail, and allow drag and drop
+  document.querySelectorAll('.drop').forEach(function(drop){
+    var input = drop.querySelector('input[type=file]');
+    var name = drop.querySelector('.fname');
+    var thumb = drop.querySelector('.thumb');
+    var current = drop.dataset.current || '';   // cover already saved (edit mode)
+
+    function update(){
+      var f = input.files && input.files[0];
+      if (f) {
+        drop.classList.add('has');
+        name.textContent = f.name;
+        if (thumb && f.type.indexOf('image/') === 0) {
+          thumb.src = URL.createObjectURL(f);
+          thumb.alt = 'Preview of the chosen cover';
+        }
+      } else if (current) {
+        // nothing new chosen: keep showing the saved cover
+        drop.classList.add('has');
+        name.textContent = 'Current cover. Choose a new picture to replace it.';
+        thumb.src = current;
+        thumb.alt = 'Current cover';
+      } else {
+        drop.classList.remove('has');
+        name.textContent = '';
+        if (thumb) thumb.removeAttribute('src');
+      }
+    }
+    input.addEventListener('change', update);
+
+    ['dragenter', 'dragover'].forEach(function(ev){
+      drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('over'); });
+    });
+    ['dragleave', 'drop'].forEach(function(ev){
+      drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('over'); });
+    });
+    drop.addEventListener('drop', function(e){
+      if (e.dataTransfer && e.dataTransfer.files.length) {
+        input.files = e.dataTransfer.files;
+        update();
+      }
+    });
+    update();
+  });
+
+  // stop double clicks while saving
+  form.addEventListener('submit', function(){
+    var btn = document.getElementById('save');
+    setTimeout(function(){ btn.disabled = true; btn.textContent = 'Saving...'; }, 0);
+  });
+})();
+</script>
+</body>
+</html>

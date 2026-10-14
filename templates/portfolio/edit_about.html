@@ -1,0 +1,386 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Edit About | Rekhaa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#eadfca; --paper-hi:#f3e9d6; --paper-lo:#e6d8be;
+  --ink:#780d10; --ink-btn:#7d1012; --ink-text:#5b0c0e;
+  --shadow:60,35,20;
+  --title:"Playfair Display",Georgia,serif;
+  --soft:"Cormorant Garamond",Georgia,serif;
+  --hand:"Caveat","Segoe Script",cursive;
+  --body:Georgia,"Times New Roman",serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;color:var(--ink-text);font-family:var(--body);
+  background:radial-gradient(ellipse at 50% 30%,var(--paper-hi) 0%,var(--paper-lo) 100%) fixed;background-color:var(--paper);
+  -webkit-font-smoothing:antialiased}
+svg.grain{position:fixed;inset:0;width:100%;height:100%;opacity:.5;mix-blend-mode:multiply;pointer-events:none;z-index:0}
+main,header,footer{position:relative;z-index:1}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink-btn);outline-offset:3px;border-radius:12px}
+
+/* top bar, same as the other pages */
+.top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;max-width:1080px;margin:0 auto;padding:14px 20px}
+.brand{display:flex;align-items:center;text-decoration:none;color:var(--ink);transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.brand:hover{transform:scale(1.04)}
+.brand img{display:block;height:48px;width:auto;max-width:190px;object-fit:contain}
+.top nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px}
+.top nav a{font-size:14px;text-decoration:none;padding:6px 16px;border-radius:20px;border:1px solid transparent;transition:border-color .25s,background .25s}
+.top nav a:hover,.top nav a[aria-current]{border-color:var(--ink-btn);background:rgba(255,255,255,.45)}
+
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+
+.btn{display:inline-block;font:15px var(--body);color:var(--ink-text);background:rgba(255,255,255,.45);border:1px solid var(--ink-btn);border-radius:20px;padding:9px 26px;text-decoration:none;cursor:pointer;transition:transform .25s,box-shadow .25s,background .25s,opacity .25s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(var(--shadow),.22)}
+.btn.primary{background:var(--ink-btn);color:var(--paper-hi)}
+.btn.quiet{border-color:transparent;background:none;opacity:.8}
+.btn:disabled{opacity:.7;cursor:progress;transform:none;box-shadow:none}
+
+/* heading */
+.intro{padding:clamp(16px,4vw,40px) 0 26px;text-align:center}
+.intro h1{margin:0;font-family:var(--title);font-style:italic;font-weight:500;font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.1;color:var(--ink);animation:settle 1s cubic-bezier(.2,.7,.2,1) both}
+.intro p{margin:10px auto 0;font-family:var(--hand);font-size:1.5rem;color:var(--ink);opacity:0;animation:settle .8s ease .4s forwards}
+.stroke{display:block;width:min(220px,55%);height:14px;margin:12px auto 0;overflow:visible}
+.stroke path{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.2s cubic-bezier(.5,0,.2,1) .7s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes settle{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* the form card */
+.sheet{padding:30px 30px 26px;background:rgba(255,255,255,.45);border:1px solid rgba(125,16,18,.3);border-radius:26px;box-shadow:0 18px 38px rgba(var(--shadow),.16);opacity:0;animation:settle .9s ease .5s forwards}
+.field{margin:0 0 24px}
+.field .t{display:block;margin:0 0 7px 4px;font-family:var(--title);font-style:italic;font-size:1.2rem;color:var(--ink)}
+.opt{font-family:var(--body);font-style:normal;font-size:12px;opacity:.65;margin-left:6px}
+.field input[type=text],.field textarea{display:block;width:100%;font:16px var(--body);color:var(--ink-text);background:rgba(255,255,255,.6);border:1px solid rgba(125,16,18,.4);border-radius:16px;padding:12px 16px;transition:border-color .25s,box-shadow .25s,background .25s}
+.field textarea{min-height:90px;resize:vertical;line-height:1.55}
+.field textarea.tall{height:200px}
+.field textarea.mid{height:130px}
+.field input[type=text]:focus,.field textarea:focus{outline:none;border-color:var(--ink-btn);background:#fff;box-shadow:0 0 0 4px rgba(125,16,18,.12)}
+.hint{margin:6px 0 0 4px;font-family:var(--soft);font-style:italic;font-size:1.05rem;opacity:.8}
+.err{margin:6px 0 0 4px;font-size:14px;color:#a3140f}
+.errbox{margin:0 0 20px;padding:12px 16px;border:1px solid #a3140f;border-radius:14px;background:rgba(163,20,15,.07);font-size:14px;color:#a3140f}
+.check{display:flex;align-items:center;gap:8px;margin:10px 0 0 4px;font-size:14px;cursor:pointer}
+.check input{width:16px;height:16px;accent-color:var(--ink-btn)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+
+/* upload box */
+.drop{position:relative;display:flex;align-items:center;justify-content:center;gap:16px;min-height:130px;padding:18px;text-align:center;border:2px dashed rgba(125,16,18,.5);border-radius:20px;background:rgba(255,255,255,.35);cursor:pointer;transition:background .25s,border-color .25s,transform .25s}
+.drop:hover,.drop.over{background:rgba(255,255,255,.65);border-color:var(--ink-btn)}
+.drop.over{transform:scale(1.015)}
+.drop:focus-within{outline:2px solid var(--ink-btn);outline-offset:3px}
+.drop input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.drop .say{font-family:var(--hand);font-size:1.5rem;line-height:1.1;color:var(--ink)}
+.drop .small{display:block;margin-top:4px;font-size:13px;opacity:.7}
+.drop .fname{display:block;margin-top:6px;font-size:14px;word-break:break-all}
+.drop .thumb{display:none;width:96px;height:120px;object-fit:cover;border-radius:16px;box-shadow:0 8px 18px rgba(var(--shadow),.25)}
+.drop.has .thumb{display:block}
+.drop.has{border-style:solid}
+
+/* milestones */
+.mrow{margin:0 0 14px;padding:16px 16px 12px;background:rgba(255,255,255,.35);border:1px solid rgba(125,16,18,.3);border-radius:18px;animation:settle .5s ease}
+.mgrid{display:grid;grid-template-columns:110px 1fr;gap:12px}
+.mgrid .wide{grid-column:1 / -1}
+.mrow label.s{display:block;margin:0 0 4px 4px;font-family:var(--soft);font-style:italic;font-size:1.1rem}
+.mrow input[type=text],.mrow input[type=number]{display:block;width:100%;font:16px var(--body);color:var(--ink-text);background:rgba(255,255,255,.6);border:1px solid rgba(125,16,18,.4);border-radius:14px;padding:10px 14px;transition:border-color .25s,box-shadow .25s,background .25s}
+.mrow input[type=text]:focus,.mrow input[type=number]:focus{outline:none;border-color:var(--ink-btn);background:#fff;box-shadow:0 0 0 4px rgba(125,16,18,.12)}
+.mremove{margin:10px 0 0 4px;padding:0;border:0;background:none;font:13px var(--body);color:var(--ink-text);text-decoration:underline;cursor:pointer;opacity:.75}
+.mremove:hover{opacity:1}
+.btn.small{font-size:14px;padding:7px 20px}
+
+.actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:10px;margin-top:6px}
+
+footer{text-align:center;font-size:13px;opacity:.7;padding:30px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+
+@media (max-width:560px){
+  .sheet{padding:22px 18px 20px;border-radius:22px}
+  .row{grid-template-columns:1fr;gap:0}
+  .mgrid{grid-template-columns:1fr}
+  .top nav a{padding:6px 10px}
+  .brand img{height:38px;max-width:140px}
+  .actions{justify-content:stretch}
+  .actions .btn{flex:1;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  .intro p,.sheet{opacity:1 !important}
+  .stroke path{stroke-dashoffset:0 !important}
+}
+</style>
+</head>
+<body>
+<svg class="grain" aria-hidden="true"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9 .12" numOctaves="4" seed="3"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .45  0 0 0 0 .32  0 0 0 .55 -.1"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+
+<header class="top">
+  <a class="brand" href="{% url 'lander' %}" aria-label="Rekhaa home">
+    <img src="{% get_media_prefix %}logo/logo.png" alt="Rekhaa">
+  </a>
+  <nav aria-label="Main">
+    <a href="{% url 'about' %}">Back to About</a>
+    <a href="{% url 'category' %}">Categories</a>
+    {% if user.is_authenticated %}
+    <form class="logout-form" method="post" action="{% url 'logout' %}" style="display:inline;margin:0">
+      {% csrf_token %}
+      <button class="logout" type="submit" style="font:14px var(--body);padding:6px 16px;border-radius:20px;border:1px solid var(--ink-btn);background:rgba(255,255,255,.45);color:var(--ink-text);cursor:pointer;">Log out</button>
+    </form>
+    {% endif %}
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Edit About</h1>
+    <svg class="stroke" viewBox="0 0 220 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 8 C42 2 86 12 128 6 S190 4 217 8"/></svg>
+    <p>the artist's story, in their own words</p>
+  </section>
+
+  <form class="sheet" id="aboutForm" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="errbox">{% for e in form.non_field_errors %}{{ e }} {% endfor %}</div>
+    {% endif %}
+
+    <div class="field">
+      <span class="t">Portrait <span class="opt">optional</span></span>
+      <label class="drop{% if form.instance.photo %} has{% endif %}" for="id_photo"
+             {% if form.instance.photo %}data-current="{{ form.instance.photo.url }}" data-keep="Current portrait kept"{% endif %}>
+        <img class="thumb" alt="Preview of the portrait"{% if form.instance.photo %} src="{{ form.instance.photo.url }}"{% endif %}>
+        <span>
+          <span class="say">{% if form.instance.photo %}Drop a new portrait here to replace it, or tap to choose{% else %}Drop a portrait here, or tap to choose{% endif %}</span>
+          <span class="small">JPG or PNG. A portrait-shaped photo fits best.</span>
+          <span class="fname"></span>
+        </span>
+        <input type="file" name="photo" id="id_photo" accept="image/*">
+      </label>
+      {% if form.instance.photo %}
+      <label class="check"><input type="checkbox" name="photo-clear"> Remove the current portrait</label>
+      {% endif %}
+      {% for e in form.photo.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+
+    <!-- VIDEO UPLOAD SECTION -->
+    <div class="field">
+      <span class="t">Story Video <span class="opt">optional</span></span>
+      <label class="drop{% if form.instance.video %} has{% endif %}" for="id_video"
+             {% if form.instance.video %}data-current="Current video kept" data-keep="Current video kept"{% endif %}>
+        <span>
+          <span class="say">{% if form.instance.video %}Drop a new video here to replace it, or tap to choose{% else %}Drop a story video here, or tap to choose{% endif %}</span>
+          <span class="small">MP4 or WebM format.</span>
+          <span class="fname">{% if form.instance.video %}{{ form.instance.video.name }}{% endif %}</span>
+        </span>
+        <input type="file" name="video" id="id_video" accept="video/mp4,video/webm">
+      </label>
+      {% if form.instance.video %}
+      <label class="check"><input type="checkbox" name="video-clear"> Remove the current video</label>
+      {% endif %}
+      {% for e in form.video.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="field">
+      <label class="t" for="id_bio">Who I am</label>
+      {{ form.bio }}
+      <p class="hint">The main story. Start a new paragraph by pressing Enter twice.</p>
+      {% for e in form.bio.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="field">
+      <label class="t" for="id_inspirations">What inspires me <span class="opt">optional</span></label>
+      {{ form.inspirations }}
+      {% for e in form.inspirations.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label class="t" for="id_themes">Subjects and moods <span class="opt">optional</span></label>
+        {{ form.themes }}
+        <p class="hint">Separate each one with a comma.</p>
+        {% for e in form.themes.errors %}<p class="err">{{ e }}</p>{% endfor %}
+      </div>
+      <div class="field">
+        <label class="t" for="id_mediums">Mediums I work in <span class="opt">optional</span></label>
+        {{ form.mediums }}
+        <p class="hint">Separate each one with a comma.</p>
+        {% for e in form.mediums.errors %}<p class="err">{{ e }}</p>{% endfor %}
+      </div>
+    </div>
+
+    {# My journey: the milestones on the About page. Existing ones can be changed or removed, new ones added. #}
+    <div class="field">
+      <span class="t">My journey <span class="opt">optional</span></span>
+      <p class="hint" style="margin:0 0 12px 4px">Moments that already happened. They are shown oldest first.</p>
+
+      {{ formset.management_form }}
+      {% for e in formset.non_form_errors %}<p class="err">{{ e }}</p>{% endfor %}
+
+      <div id="mRows" data-prefix="{{ formset.prefix }}">
+        {% for f in formset %}
+        <div class="mrow">
+          {% for h in f.hidden_fields %}{{ h }}{% endfor %}
+          {% for e in f.non_field_errors %}<p class="err">{{ e }}</p>{% endfor %}
+          <div class="mgrid">
+            <div>
+              <label class="s" for="{{ f.year.id_for_label }}">Year</label>
+              {{ f.year }}
+              {% for e in f.year.errors %}<p class="err">{{ e }}</p>{% endfor %}
+            </div>
+            <div>
+              <label class="s" for="{{ f.title.id_for_label }}">What happened</label>
+              {{ f.title }}
+              {% for e in f.title.errors %}<p class="err">{{ e }}</p>{% endfor %}
+            </div>
+            <div class="wide">
+              <label class="s" for="{{ f.note.id_for_label }}">A line of detail <span class="opt">optional</span></label>
+              {{ f.note }}
+              {% for e in f.note.errors %}<p class="err">{{ e }}</p>{% endfor %}
+            </div>
+          </div>
+          {% if f.instance.pk %}
+          <label class="check">{{ f.DELETE }} Remove this milestone</label>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+
+      <button class="btn small" type="button" id="addMilestone">+ Add a milestone</button>
+    </div>
+
+    {# A blank row that the button above copies. It is never sent with the form. #}
+    <template id="mTemplate">
+      <div class="mrow">
+        {% for h in formset.empty_form.hidden_fields %}{{ h }}{% endfor %}
+        <div class="mgrid">
+          <div>
+            <label class="s">Year</label>
+            {{ formset.empty_form.year }}
+          </div>
+          <div>
+            <label class="s">What happened</label>
+            {{ formset.empty_form.title }}
+          </div>
+          <div class="wide">
+            <label class="s">A line of detail <span class="opt">optional</span></label>
+            {{ formset.empty_form.note }}
+          </div>
+        </div>
+        <button class="mremove" type="button">Remove this row</button>
+      </div>
+    </template>
+
+    <div class="field">
+      <label class="t" for="id_statement">In my own words <span class="opt">optional</span></label>
+      {{ form.statement }}
+      <p class="hint">Shown as a large quote near the end of the page.</p>
+      {% for e in form.statement.errors %}<p class="err">{{ e }}</p>{% endfor %}
+    </div>
+
+    <div class="actions">
+      <a class="btn quiet" href="{% url 'about' %}">Cancel</a>
+      <button class="btn primary" type="submit" id="save">Save changes</button>
+    </div>
+  </form>
+</main>
+
+<footer>&copy; {% now "Y" %} Rekhaa. All paintings belong to the artist.</footer>
+
+<script>
+(function(){
+  var form = document.getElementById('aboutForm');
+
+  // make the text areas a comfortable size
+  var sizes = {id_bio: 'tall', id_inspirations: 'mid', id_statement: 'mid'};
+  Object.keys(sizes).forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.classList.add(sizes[id]);
+  });
+
+  // the portrait and video upload boxes: show file name and support drag & drop
+  document.querySelectorAll('.drop').forEach(function(drop){
+    var input = drop.querySelector('input[type=file]');
+    var name = drop.querySelector('.fname');
+    var thumb = drop.querySelector('.thumb');
+    var keepText = drop.dataset.keep || '';
+    var currentUrl = drop.dataset.current || '';
+
+    function update(){
+      var f = input.files && input.files[0];
+      if (f) {
+        drop.classList.add('has');
+        name.textContent = f.name;
+        if (thumb && f.type.indexOf('image/') === 0) thumb.src = URL.createObjectURL(f);
+      } else if (keepText) {
+        drop.classList.add('has');
+        name.textContent = keepText;
+        if (thumb && currentUrl) thumb.src = currentUrl;
+      } else {
+        drop.classList.remove('has');
+        name.textContent = '';
+        if (thumb) thumb.removeAttribute('src');
+      }
+    }
+    input.addEventListener('change', update);
+
+    ['dragenter', 'dragover'].forEach(function(ev){
+      drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('over'); });
+    });
+    ['dragleave', 'drop'].forEach(function(ev){
+      drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('over'); });
+    });
+    drop.addEventListener('drop', function(e){
+      if (e.dataTransfer && e.dataTransfer.files.length) {
+        input.files = e.dataTransfer.files;
+        update();
+      }
+    });
+    update();
+  });
+
+  // milestones: placeholders, "Add a milestone" and "Remove this row"
+  var rows = document.getElementById('mRows');
+  var prefix = rows.dataset.prefix;
+  var total = document.getElementById('id_' + prefix + '-TOTAL_FORMS');
+  var tpl = document.getElementById('mTemplate');
+
+  function decorate(row){
+    row.querySelectorAll('input[name$="-year"]').forEach(function(el){ el.placeholder = 'e.g. 2015'; });
+    row.querySelectorAll('input[name$="-title"]').forEach(function(el){ el.placeholder = 'What happened'; });
+    row.querySelectorAll('input[name$="-note"]').forEach(function(el){ el.placeholder = 'One line of detail (optional)'; });
+  }
+  decorate(rows);
+
+  document.getElementById('addMilestone').addEventListener('click', function(){
+    var n = parseInt(total.value, 10);
+    var holder = document.createElement('div');
+    holder.innerHTML = tpl.innerHTML.replace(/__prefix__/g, n);   // give the copy its own number
+    var row = holder.firstElementChild;
+    rows.appendChild(row);
+    total.value = n + 1;
+    decorate(row);
+    var first = row.querySelector('input[name$="-year"]');
+    if (first) first.focus();
+  });
+
+  // only rows added with the button have a "Remove this row" link
+  rows.addEventListener('click', function(e){
+    if (e.target.classList.contains('mremove')) e.target.closest('.mrow').remove();
+  });
+
+  // stop double clicks while saving
+  form.addEventListener('submit', function(){
+    var btn = document.getElementById('save');
+    setTimeout(function(){ btn.disabled = true; btn.textContent = 'Saving...'; }, 0);
+  });
+})();
+</script>
+</body>
+</html>

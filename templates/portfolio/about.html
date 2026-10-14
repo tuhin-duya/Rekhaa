@@ -1,0 +1,434 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About the Artist | Rekhaa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+:root{
+  --paper:#eadfca; --paper-hi:#f3e9d6; --paper-lo:#e6d8be;
+  --ink:#780d10; --ink-btn:#7d1012; --ink-text:#5b0c0e;
+  --gold:#c9a24a; --shadow:60,35,20;
+  --display:"Cormorant Garamond",Georgia,serif;
+  --hand:"Caveat","Segoe Script",cursive;
+  --body:Georgia,"Times New Roman",serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{
+  margin:0;min-height:100%;color:var(--ink-text);font-family:var(--body);
+  background:radial-gradient(ellipse at 50% 30%,var(--paper-hi) 0%,var(--paper-lo) 100%) fixed;
+  background-color:var(--paper);
+  -webkit-font-smoothing:antialiased;
+}
+/* paper grain, same recipe as the landing page */
+svg.grain{position:fixed;inset:0;width:100%;height:100%;opacity:.5;mix-blend-mode:multiply;pointer-events:none;z-index:0}
+main,header,footer{position:relative;z-index:1}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink-btn);outline-offset:3px;border-radius:6px}
+
+/* reading progress: a single ink line */
+#bar{position:fixed;left:0;right:0;top:0;height:3px;background:var(--ink);transform-origin:0 50%;transform:scaleX(0);z-index:5}
+
+/* top bar with the logo (same as the category pages) */
+.top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;max-width:1080px;margin:0 auto;padding:14px 20px}
+.brand{display:flex;align-items:center;text-decoration:none;color:var(--ink);transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.brand:hover{transform:scale(1.04)}
+.brand img{display:block;height:48px;width:auto;max-width:190px;object-fit:contain}
+.top nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px}
+.top nav a{font-size:14px;text-decoration:none;padding:6px 16px;border-radius:20px;border:1px solid transparent;transition:border-color .25s,background .25s,transform .25s,box-shadow .25s}
+.top nav a:hover,.top nav a[aria-current]{border-color:var(--ink-btn);background:rgba(255,255,255,.45)}
+
+/* "Edit" button in the navbar (managers only) */
+.top nav a.add{display:inline-flex;align-items:center;gap:7px;margin-left:6px;background:var(--ink-btn);border-color:var(--ink-btn);color:var(--paper-hi)}
+.top nav a.add:hover{background:var(--ink-text);border-color:var(--ink-text);transform:translateY(-2px);box-shadow:0 8px 18px rgba(var(--shadow),.25)}
+.top nav a.add svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.top nav a.add:hover svg{transform:rotate(-12deg) scale(1.1)}
+
+/* "Log out" button in the navbar (only while logged in) */
+.logout-form{display:inline;margin:0}
+.logout{font:14px var(--body);padding:6px 16px;border-radius:20px;border:1px solid var(--ink-btn);background:rgba(255,255,255,.45);color:var(--ink-text);cursor:pointer;transition:background .25s,color .25s,transform .25s,box-shadow .25s}
+.logout:hover{background:var(--ink-btn);color:var(--paper-hi);transform:translateY(-2px);box-shadow:0 8px 18px rgba(var(--shadow),.22)}
+
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+
+/* buttons, same pill language as the landing page */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:15px var(--body);color:var(--ink-text);background:rgba(255,255,255,.45);border:1px solid var(--ink-btn);border-radius:20px;padding:8px 22px;text-decoration:none;cursor:pointer;transition:transform .25s ease,box-shadow .25s ease,background .25s ease,color .25s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(var(--shadow),.22)}
+.btn.primary{background:var(--ink-btn);color:var(--paper-hi)}
+.btn.quiet{border-color:transparent;background:none;font-size:13px;opacity:.75}
+.btn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s ease}
+.btn:hover svg{transform:scale(1.12)}
+
+/* ---------- hero: the one orchestrated moment ---------- */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding:clamp(28px,6vw,72px) 0 clamp(40px,7vw,90px)}
+.hero h1{margin:0;font-family:var(--display);font-weight:500;font-style:italic;font-size:clamp(3rem,8vw,6rem);line-height:1;color:var(--ink);letter-spacing:-.01em;animation:settle 1.1s cubic-bezier(.2,.7,.2,1) both}
+.catch{margin:22px 0 0;font-family:var(--display);font-size:clamp(1.5rem,3.4vw,2.35rem);line-height:1.25;font-weight:500;max-width:19ch}
+.catch span{display:inline-block;opacity:0;filter:blur(6px);animation:ink .9s ease forwards;animation-delay:calc(.9s + var(--i)*.22s)}
+@keyframes ink{to{opacity:1;filter:blur(0)}}
+@keyframes settle{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.stroke{display:block;width:min(340px,70%);height:16px;margin-top:12px;overflow:visible}
+.stroke path{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.4s cubic-bezier(.5,0,.2,1) 3s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.hero .cta{margin-top:34px;display:flex;flex-wrap:wrap;gap:12px;opacity:0;animation:settle .8s ease 3.6s forwards}
+
+.portrait{position:relative;justify-self:center;width:min(100%,360px);aspect-ratio:4/5;padding:14px;background:rgba(255,255,255,.55);border:1px solid rgba(125,16,18,.35);box-shadow:10px 14px 28px rgba(var(--shadow),.25);transform:rotate(-1.5deg);transition:transform .25s ease-out;animation:settle 1.2s ease .3s both}
+.portrait img,.portrait .ph{width:100%;height:100%;object-fit:cover;display:block;filter:sepia(.12) contrast(1.02)}
+.portrait .ph{display:grid;place-items:center;background:linear-gradient(160deg,var(--paper-hi),var(--paper-lo));font-family:var(--display);font-style:italic;font-size:7rem;color:var(--ink)}
+.portrait::before,.portrait::after{content:"";position:absolute;width:84px;height:24px;background:rgba(201,162,74,.5);box-shadow:0 1px 3px rgba(var(--shadow),.2)}
+.portrait::before{top:-10px;left:-24px;transform:rotate(-38deg)}
+.portrait::after{bottom:-8px;right:-26px;transform:rotate(-38deg)}
+
+/* ---------- gallery in numbers ---------- */
+.stats{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;margin-top:-10px;margin-bottom:56px}
+.stat{min-width:190px;text-align:center;padding:18px 34px 14px;background:rgba(255,255,255,.4);border:1px solid rgba(125,16,18,.3);border-radius:20px;box-shadow:0 12px 26px rgba(var(--shadow),.12);transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s}
+.stat:hover{transform:translateY(-5px);box-shadow:0 20px 34px rgba(var(--shadow),.2)}
+.stat .num{display:block;font-family:var(--display);font-weight:600;font-style:italic;font-size:3.6rem;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.stat .lbl{display:block;margin-top:4px;font-family:var(--hand);font-size:1.5rem;color:var(--ink);opacity:.85}
+
+/* ---------- notes: ruled notebook cards ---------- */
+.notes{display:grid;gap:44px;max-width:820px;margin:0 auto;padding-bottom:40px}
+.card{position:relative;padding:30px 30px 10px 78px;background:rgba(255,255,255,.4);border:1px solid rgba(125,16,18,.3);border-radius:14px;box-shadow:0 14px 30px rgba(var(--shadow),.12);transform:rotate(var(--r,0deg))}
+.card::before{content:"";position:absolute;left:58px;top:0;bottom:0;width:1px;background:rgba(125,16,18,.3)}
+.card::after{content:"";position:absolute;left:16px;top:0;bottom:0;width:16px;
+  background:
+   radial-gradient(circle,#d8c8a6 0 5px,rgba(var(--shadow),.2) 6px,transparent 7px) 0 16%/16px 16px no-repeat,
+   radial-gradient(circle,#d8c8a6 0 5px,rgba(var(--shadow),.2) 6px,transparent 7px) 0 50%/16px 16px no-repeat,
+   radial-gradient(circle,#d8c8a6 0 5px,rgba(var(--shadow),.2) 6px,transparent 7px) 0 84%/16px 16px no-repeat}
+.card h2{margin:0 0 4px;font-family:var(--display);font-weight:600;font-size:clamp(1.8rem,4vw,2.4rem);line-height:1.15;color:var(--ink)}
+.card .aside{font-family:var(--hand);font-size:1.35rem;color:var(--ink);opacity:.8;margin:0 0 6px}
+.ul{display:block;width:150px;height:12px;margin:2px 0 14px;overflow:visible}
+.ul path{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+.in .ul path{stroke-dashoffset:0;transition:stroke-dashoffset 1.1s cubic-bezier(.5,0,.2,1) .35s}
+.lines{font-size:18px;line-height:32px;background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 31px,rgba(125,16,18,.13) 31px,rgba(125,16,18,.13) 32px)}
+.lines p{margin:0 0 32px}
+
+/* chips */
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 24px;padding:0;list-style:none}
+.chips li{font-size:15px;padding:5px 16px;border:1px solid var(--ink-btn);border-radius:20px;background:rgba(255,255,255,.45);transition:background .25s,color .25s,transform .25s;cursor:default}
+.chips li:hover{background:var(--ink-btn);color:var(--paper-hi);transform:translateY(-2px) rotate(-1.5deg)}
+.sub{font-family:var(--display);font-style:italic;font-size:1.3rem;margin:14px 0 6px;color:var(--ink)}
+
+/* in the artist's own words */
+.words{max-width:760px;margin:30px auto 60px;text-align:center;padding:0 8px}
+.words .mark{font-family:var(--display);font-size:6rem;line-height:.5;color:var(--ink);opacity:.35;display:block;height:36px}
+.words blockquote{margin:0;font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(1.5rem,3.2vw,2.1rem);line-height:1.45;color:var(--ink-text)}
+.words .hand{margin-top:14px;font-family:var(--hand);font-size:1.6rem;color:var(--ink)}
+
+/* journey: this is a real sequence, so a timeline fits */
+.timeline{position:relative;margin:6px 0 24px;padding-left:34px}
+.timeline::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:var(--ink);opacity:.45;transform-origin:top;transform:scaleY(0);transition:transform 1.4s cubic-bezier(.5,0,.2,1) .3s}
+.in .timeline::before{transform:scaleY(1)}
+.timeline li{position:relative;list-style:none;margin:0 0 22px}
+.timeline li::before{content:"";position:absolute;left:-34px;top:8px;width:16px;height:16px;border-radius:50%;background:var(--paper-hi);border:2px solid var(--ink);transition:background .3s}
+.timeline li:hover::before{background:var(--ink)}
+.timeline .yr{font-family:var(--display);font-weight:600;font-size:1.5rem;color:var(--ink)}
+.timeline .ttl{font-weight:bold;font-size:17px}
+.timeline .nt{margin:2px 0 0;font-size:16px;line-height:1.6}
+.timeline{padding-left:34px}
+
+/* closing */
+.closing{text-align:center;padding:50px 0 30px}
+.closing h2{margin:0 0 16px;font-family:var(--display);font-style:italic;font-weight:500;font-size:clamp(1.9rem,4.5vw,3rem);color:var(--ink)}
+.closing .social-note{font-family:var(--hand);font-size:1.45rem;color:var(--ink);opacity:.9;margin:0 0 16px}
+.closing .row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;align-items:center}
+footer{text-align:center;font-size:13px;opacity:.7;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+
+/* dialog video modal style */
+dialog{border:0;padding:0;background:transparent;max-width:94vw;max-height:94vh;overflow:visible;color:var(--paper-hi);text-align:center}
+dialog::backdrop{background:rgba(38,6,8,.82);backdrop-filter:blur(3px)}
+dialog video{display:block;max-width:92vw;max-height:72vh;margin:0 auto;border-radius:18px;box-shadow:0 20px 60px rgba(0,0,0,.5);background:#000}
+dialog .cap{margin:14px 0 0;font-family:var(--display);font-style:italic;font-size:1.5rem}
+dialog .x{position:absolute;top:-16px;right:-6px;width:40px;height:40px;border-radius:50%;border:0;background:var(--paper-hi);color:var(--ink);font-size:22px;line-height:1;cursor:pointer}
+
+/* notes settle onto the page as they scroll in */
+.js .card{opacity:0;transform:translateY(14px) rotate(calc(var(--r,0deg) * 3));transition:opacity .8s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.js .card.in{opacity:1;transform:rotate(var(--r,0deg))}
+
+/* responsive */
+@media (max-width:820px){
+  .hero{grid-template-columns:1fr;gap:34px;text-align:left}
+  .portrait{order:-1;width:min(78%,300px)}
+  .catch{max-width:none}
+}
+@media (max-width:560px){
+  .card{padding:24px 18px 6px 46px;--r:0deg !important}
+  .card::before{left:32px}
+  .card::after{display:none}
+  .lines{font-size:17px}
+  .top nav a{padding:6px 10px}
+  .top nav a.add{margin-left:2px}
+  .logout{padding:6px 10px}
+  .brand img{height:38px;max-width:140px}
+  .stat{min-width:140px;padding:14px 22px 10px}
+  .stat .num{font-size:2.8rem}
+}
+
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  .catch span,.hero .cta,.js .card{opacity:1 !important;filter:none !important;transform:rotate(var(--r,0deg)) !important}
+  .stroke path,.ul path{stroke-dashoffset:0 !important}
+  .timeline::before{transform:scaleY(1) !important}
+}
+</style>
+</head>
+<body>
+<svg class="grain" aria-hidden="true"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9 .12" numOctaves="4" seed="3"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .45  0 0 0 0 .32  0 0 0 .55 -.1"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+<div id="bar" aria-hidden="true"></div>
+
+<header class="top">
+  <a class="brand" href="{% url 'lander' %}" aria-label="Rekhaa home">
+    <img src="{% get_media_prefix %}logo/logo.png" alt="Rekhaa">
+  </a>
+  <nav aria-label="Main">
+    <a href="{% url 'about' %}" aria-current="page">About</a>
+    <a href="{% url 'category' %}">Categories</a>
+    {% if user.is_authenticated %}
+    <a class="add" href="{% url 'edit_about' %}" aria-label="Edit the About page">
+      Edit
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+    </a>
+    <form class="logout-form" method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button class="logout" type="submit">Log out</button>
+    </form>
+    {% endif %}
+  </nav>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="wrap hero">
+    <div>
+      <h1>{% if artist.user.first_name or artist.user.last_name %}{{ artist.user.first_name }} {{ artist.user.last_name }}{% else %}The Artist{% endif %}</h1>
+      <p class="catch" aria-label="Where the quiet thoughts take shape on a silent canvas">
+        <span style="--i:0">Where</span>
+        <span style="--i:1">the</span>
+        <span style="--i:2">quiet</span>
+        <span style="--i:3">thoughts</span>
+        <span style="--i:4">take</span>
+        <span style="--i:5">shape</span>
+        <span style="--i:6">on</span>
+        <span style="--i:7">a</span>
+        <span style="--i:8">silent</span>
+        <span style="--i:9">canvas</span>
+      </p>
+      <svg class="stroke" viewBox="0 0 340 16" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 10 C60 2 120 15 190 8 S300 4 337 9"/></svg>
+      <div class="cta">
+        <a class="btn primary" href="{% url 'category' %}">Explore my art</a>
+        {% if artist.video %}
+          <button class="btn" id="storyBtn" type="button">Read my story</button>
+        {% else %}
+          <a class="btn" href="#story">Read my story</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <figure class="portrait" style="margin:0">
+      {% if artist.photo %}
+        <img src="{{ artist.photo.url }}" alt="Portrait of {% if artist.user.first_name or artist.user.last_name %}{{ artist.user.first_name }} {{ artist.user.last_name }}{% else %}the artist{% endif %}">
+      {% else %}
+        <div class="ph" aria-hidden="true">{% if artist.user.first_name %}{{ artist.user.first_name|slice:":1" }}{% else %}R{% endif %}</div>
+      {% endif %}
+    </figure>
+  </section>
+
+  <!-- GALLERY IN NUMBERS -->
+  <section class="wrap stats" aria-label="The gallery in numbers">
+    <div class="stat">
+      <span class="num" data-to="{{ painting_count }}">{{ painting_count }}</span>
+      <span class="lbl">Painting{{ painting_count|pluralize }}</span>
+    </div>
+    <div class="stat">
+      <span class="num" data-to="{{ category_count }}">{{ category_count }}</span>
+      <span class="lbl">Collection{{ category_count|pluralize }}</span>
+    </div>
+  </section>
+
+  <!-- NOTES -->
+  <section class="wrap notes" id="story">
+
+    <article class="card reveal" style="--r:-.5deg">
+      <p class="aside">a little about me</p>
+      <h2>Who I am</h2>
+      <svg class="ul" viewBox="0 0 150 12" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 8 C35 2 70 11 105 6 S140 5 148 7"/></svg>
+      <div class="lines">
+        {% if artist.bio %}{{ artist.bio|linebreaks }}{% else %}<p>The artist's story will appear here once it is added.</p>{% endif %}
+      </div>
+    </article>
+
+    {% if artist.theme_list or artist.medium_list %}
+    <article class="card reveal" style="--r:.4deg">
+      <p class="aside">what I keep returning to</p>
+      <h2>What I paint</h2>
+      <svg class="ul" viewBox="0 0 150 12" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 7 C40 11 80 2 112 7 S142 8 148 6"/></svg>
+      {% if artist.theme_list %}
+        <p class="sub">Subjects and moods</p>
+        <ul class="chips">{% for t in artist.theme_list %}<li>{{ t }}</li>{% endfor %}</ul>
+      {% endif %}
+      {% if artist.medium_list %}
+        <p class="sub">Mediums I work in</p>
+        <ul class="chips">{% for m in artist.medium_list %}<li>{{ m }}</li>{% endfor %}</ul>
+      {% endif %}
+    </article>
+    {% endif %}
+
+    {% if artist.inspirations %}
+    <article class="card reveal" style="--r:-.3deg">
+      <p class="aside">where ideas begin</p>
+      <h2>What inspires me</h2>
+      <svg class="ul" viewBox="0 0 150 12" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 8 C30 3 66 10 100 5 S138 7 148 6"/></svg>
+      <div class="lines">{{ artist.inspirations|linebreaks }}</div>
+    </article>
+    {% endif %}
+
+    {% if artist.milestones.all %}
+    <article class="card reveal" style="--r:.5deg">
+      <p class="aside">how it unfolded</p>
+      <h2>My journey</h2>
+      <svg class="ul" viewBox="0 0 150 12" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M2 6 C38 10 74 3 108 8 S140 6 148 7"/></svg>
+      <ol class="timeline">
+        {% for m in artist.milestones.all %}
+        <li>
+          <div class="yr">{{ m.year }}</div>
+          <div class="ttl">{{ m.title }}</div>
+          {% if m.note %}<p class="nt">{{ m.note }}</p>{% endif %}
+        </li>
+        {% endfor %}
+      </ol>
+    </article>
+    {% endif %}
+  </section>
+
+  <!-- ARTIST STATEMENT -->
+  {% if artist.statement %}
+  <section class="words" aria-label="Artist statement">
+    <span class="mark" aria-hidden="true">&ldquo;</span>
+    <blockquote>{{ artist.statement }}</blockquote>
+    <p class="hand">{% if artist.user.first_name or artist.user.last_name %}{{ artist.user.first_name }} {{ artist.user.last_name }}{% endif %}</p>
+  </section>
+  {% endif %}
+
+  <!-- CLOSING & SOCIAL CONNECT -->
+  <section class="wrap closing">
+    <p class="social-note">Follow along with my latest creations</p>
+    <div class="row" style="margin-bottom: 24px;">
+      <a class="btn primary" href="https://instagram.com/rekhaabydebadrita?vrfl=N3kzNzh2YzMwOXVr" target="_blank" rel="noopener noreferrer" aria-label="Follow me on Instagram">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        Follow me on Instagram
+      </a>
+      <a class="btn primary" href="https://www.facebook.com/profile.php?id=61582072178824&sfnsn=wiwspwa&mibextid=RUbZ1f" target="_blank" rel="noopener noreferrer" aria-label="Follow me on Facebook">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+        Follow me on Facebook
+      </a>
+    </div>
+    <div class="row">
+      <a class="btn quiet" href="{% url 'lander' %}">Back</a>
+    </div>
+  </section>
+</main>
+
+<footer>&copy; {% now "Y" %} Rekhaa. All paintings belong to the artist.</footer>
+
+{% if artist.video %}
+<dialog id="storyModal" aria-label="The artist's story video">
+  <button class="x" type="button" aria-label="Close">&times;</button>
+  <video controls playsinline preload="auto">
+    <source src="{{ artist.video.url }}" type="video/mp4">
+    Your browser does not support playing this video.
+  </video>
+  <p class="cap">The Artist's Story</p>
+</dialog>
+{% endif %}
+
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // notes settle in once as they enter the screen
+  var items = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window && !reduce) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {threshold: .18});
+    items.forEach(function(el){ io.observe(el); });
+  } else {
+    items.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // reading progress line
+  var bar = document.getElementById('bar');
+  function onScroll(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    bar.style.transform = 'scaleX(' + (max > 0 ? Math.min(1, h.scrollTop / max) : 0) + ')';
+  }
+  addEventListener('scroll', onScroll, {passive: true});
+  onScroll();
+
+  // portrait leans toward the pointer (mouse only)
+  var p = document.querySelector('.portrait');
+  if (p && !reduce && window.matchMedia('(pointer: fine)').matches) {
+    p.addEventListener('pointermove', function(e){
+      var r = p.getBoundingClientRect();
+      var x = (e.clientX - r.left) / r.width - .5;
+      var y = (e.clientY - r.top) / r.height - .5;
+      p.style.transform = 'perspective(900px) rotateY(' + (x * 9) + 'deg) rotateX(' + (-y * 9) + 'deg) rotate(-1.5deg)';
+    });
+    p.addEventListener('pointerleave', function(){ p.style.transform = ''; });
+  }
+
+  // story video: the button only opens the popup; the video starts when the viewer presses play
+  var storyBtn = document.getElementById('storyBtn');
+  var storyModal = document.getElementById('storyModal');
+  if (storyBtn && storyModal) {
+    var storyVid = storyModal.querySelector('video');
+
+    storyBtn.addEventListener('click', function(){
+      storyVid.currentTime = 0;
+      storyModal.showModal();
+    });
+
+    function closeStory(){
+      storyVid.pause();
+      storyModal.close();
+    }
+    storyModal.querySelector('.x').addEventListener('click', closeStory);
+    storyModal.addEventListener('click', function(e){ if (e.target === storyModal) closeStory(); });
+    storyModal.addEventListener('close', function(){ storyVid.pause(); });
+  }
+
+  // the numbers race up very fast (0.6 seconds) when they scroll into view
+  document.querySelectorAll('.num').forEach(function(el){
+    var to = parseInt(el.dataset.to, 10) || 0;
+    if (reduce || to === 0) return;          // no animation if reduced motion or zero
+    el.textContent = '0';
+    var o = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) return;
+        o.disconnect();
+        var start = performance.now(), dur = 600;
+        (function tick(now){
+          var t = Math.min(1, (now - start) / dur);
+          el.textContent = Math.round(to * (1 - Math.pow(1 - t, 3)));
+          if (t < 1) requestAnimationFrame(tick);
+        })(start);
+      });
+    }, {threshold: .6});
+    o.observe(el);
+  });
+})();
+</script>
+</body>
+</html>

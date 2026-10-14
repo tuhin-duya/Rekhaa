@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Art Collections | Rekhaa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,500;1,400;1,500&family=Caveat:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#eadfca; --paper-hi:#f3e9d6; --paper-lo:#e6d8be;
+  --ink:#780d10; --ink-btn:#7d1012; --ink-text:#5b0c0e;
+  --shadow:60,35,20;
+  --title:"Playfair Display",Georgia,serif;
+  --soft:"Cormorant Garamond",Georgia,serif;
+  --hand:"Caveat","Segoe Script",cursive;
+  --body:Georgia,"Times New Roman",serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;color:var(--ink-text);font-family:var(--body);
+  background:radial-gradient(ellipse at 50% 30%,var(--paper-hi) 0%,var(--paper-lo) 100%) fixed;background-color:var(--paper);
+  -webkit-font-smoothing:antialiased}
+svg.grain{position:fixed;inset:0;width:100%;height:100%;opacity:.5;mix-blend-mode:multiply;pointer-events:none;z-index:0}
+main,header,footer{position:relative;z-index:1}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--ink-btn);outline-offset:4px;border-radius:28px}
+
+/* top bar with the logo */
+.top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 16px;max-width:1080px;margin:0 auto;padding:14px 20px}
+.brand{display:flex;align-items:center;text-decoration:none;color:var(--ink);transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+.brand:hover{transform:scale(1.04)}
+.brand img{display:block;height:48px;width:auto;max-width:190px;object-fit:contain}
+.top nav{display:flex;flex-wrap:wrap;align-items:center;justify-content:flex-end;gap:6px}
+.top nav a{font-size:14px;text-decoration:none;padding:6px 16px;border-radius:20px;border:1px solid transparent;transition:border-color .25s,background .25s,transform .25s,box-shadow .25s}
+/* the box stays only on the page you are on */
+.top nav a[aria-current="page"]{border-color:var(--ink-btn);background:rgba(255,255,255,.45)}
+/* every link gets the box only while hovered (mouse devices only, so a tap on a phone never leaves it stuck) */
+@media (hover:hover){
+  .top nav a:hover{border-color:var(--ink-btn);background:rgba(255,255,255,.45)}
+  .top nav a[aria-current="page"]:hover{background:rgba(255,255,255,.7)}
+}
+
+/* "Add +" button in the navbar (managers only) */
+.top nav a.add{display:inline-flex;align-items:center;gap:6px;margin-left:6px;background:var(--ink-btn);border-color:var(--ink-btn);color:var(--paper-hi)}
+.top nav a.add:hover{background:var(--ink-text);border-color:var(--ink-text);transform:translateY(-2px);box-shadow:0 8px 18px rgba(var(--shadow),.25)}
+.top nav a.add .plus{font-size:18px;line-height:1;transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.top nav a.add:hover .plus{transform:rotate(90deg)}
+
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+
+/* buttons (used in the delete dialog) */
+.btn{display:inline-block;font:15px var(--body);color:var(--ink-text);background:rgba(255,255,255,.45);border:1px solid var(--ink-btn);border-radius:20px;padding:9px 26px;text-decoration:none;cursor:pointer;transition:transform .25s,box-shadow .25s,background .25s,opacity .25s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 18px rgba(var(--shadow),.22)}
+.btn.primary{background:var(--ink-btn);color:var(--paper-hi)}
+.btn:disabled{opacity:.7;cursor:progress;transform:none;box-shadow:none}
+
+/* heading */
+.intro{padding:clamp(24px,5vw,60px) 0 clamp(28px,5vw,48px);text-align:center}
+.intro h1{margin:0;font-family:var(--title);font-style:italic;font-weight:500;font-size:clamp(2.4rem,6.5vw,4.4rem);line-height:1.08;color:var(--ink);animation:settle 1s cubic-bezier(.2,.7,.2,1) both}
+.intro p{margin:12px auto 0;font-family:var(--hand);font-size:1.55rem;color:var(--ink);opacity:0;animation:settle .8s ease .5s forwards}
+.stroke{display:block;width:min(240px,60%);height:14px;margin:14px auto 0;overflow:visible}
+.stroke path{fill:none;stroke:var(--ink);stroke-width:3;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;animation:draw 1.2s cubic-bezier(.5,0,.2,1) .9s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes settle{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* rounded explore cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:26px;padding:6px 0 50px}
+.card{position:relative;display:block;aspect-ratio:3/4;border-radius:28px;overflow:hidden;color:var(--paper-hi);
+  background:linear-gradient(160deg,#8a1c1f,#4d0a0c);
+  box-shadow:0 14px 28px rgba(var(--shadow),.28);
+  transition:transform .45s cubic-bezier(.2,.7,.2,1),box-shadow .45s;
+  opacity:0;animation:settle .8s ease 1.1s forwards}
+.card:nth-child(2){animation-delay:1.22s}
+.card:nth-child(3){animation-delay:1.34s}
+.card:nth-child(4){animation-delay:1.46s}
+.card:nth-child(5){animation-delay:1.58s}
+.card:nth-child(6){animation-delay:1.7s}
+.card:nth-child(7){animation-delay:1.82s}
+.card:nth-child(8){animation-delay:1.94s}
+.card:hover{transform:translateY(-8px);box-shadow:0 26px 44px rgba(var(--shadow),.36)}
+/* the link that fills the whole card (Edit and Delete sit beside it, not inside it) */
+.hit{position:absolute;inset:0;display:block;color:inherit;text-decoration:none;border-radius:inherit}
+.hit:focus-visible{outline:3px solid var(--paper-hi);outline-offset:-10px;border-radius:28px}
+.card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;filter:sepia(.1) contrast(1.03);transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+.card:hover img,.hit:focus-visible img{transform:scale(1.08)}
+.ph{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--title);font-style:italic;font-size:7rem;color:rgba(243,233,214,.35)}
+/* dark wash so the name always reads */
+.card::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(38,6,8,.82) 0%,rgba(38,6,8,.35) 38%,rgba(38,6,8,0) 62%);pointer-events:none}
+.text{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:0 24px 24px}
+.text h2{margin:0;font-family:var(--title);font-style:italic;font-weight:500;font-size:clamp(1.6rem,2.6vw,2rem);line-height:1.12;letter-spacing:.005em;text-shadow:0 2px 12px rgba(0,0,0,.35)}
+.text p{margin:0;max-height:0;opacity:0;overflow:hidden;font-family:var(--soft);font-style:italic;font-size:1.2rem;line-height:1.35;transition:max-height .5s ease,opacity .5s ease,margin .5s ease}
+.card:hover .text p,.hit:focus-visible .text p{max-height:5em;opacity:.95;margin-top:8px}
+/* small round button in the corner */
+.dot{position:absolute;top:18px;right:18px;z-index:2;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:rgba(243,233,214,.88);color:var(--ink);transition:transform .45s cubic-bezier(.2,.7,.2,1),background .3s,color .3s}
+.dot svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card:hover .dot,.hit:focus-visible .dot{transform:rotate(45deg);background:var(--ink-btn);color:var(--paper-hi)}
+
+/* Edit and Delete: hidden until the card is hovered or focused (managers only) */
+.tools{position:absolute;top:16px;left:16px;z-index:3;display:flex;gap:8px;opacity:0;transform:translateY(-6px);transition:opacity .3s ease,transform .3s cubic-bezier(.2,.7,.2,1)}
+.card:hover .tools,.card:focus-within .tools{opacity:1;transform:none}
+.tool{display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;border:0;border-radius:18px;font:13px var(--body);color:var(--ink);background:rgba(243,233,214,.92);text-decoration:none;cursor:pointer;box-shadow:0 6px 14px rgba(0,0,0,.25);transition:background .25s,color .25s,transform .25s}
+.tool svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tool:hover{background:var(--ink-btn);color:var(--paper-hi);transform:translateY(-2px)}
+.tool.danger:hover{background:#a3140f}
+.tool:focus-visible{outline:2px solid var(--paper-hi);outline-offset:2px;border-radius:18px}
+
+/* delete confirmation */
+dialog.confirm{padding:0;border:1px solid rgba(125,16,18,.35);border-radius:24px;width:min(420px,92vw);background:var(--paper-hi);color:var(--ink-text);box-shadow:0 24px 60px rgba(0,0,0,.4)}
+dialog.confirm::backdrop{background:rgba(38,6,8,.72);backdrop-filter:blur(3px)}
+dialog.confirm form{margin:0;padding:28px 28px 24px;text-align:center}
+dialog.confirm h3{margin:0;font-family:var(--title);font-style:italic;font-weight:500;font-size:1.7rem;line-height:1.15;color:var(--ink)}
+dialog.confirm p{margin:10px 0 0;font-family:var(--soft);font-style:italic;font-size:1.3rem;line-height:1.35}
+dialog.confirm .row{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:22px}
+
+.empty{text-align:center;padding:40px 0 70px;font-family:var(--title);font-style:italic;font-size:1.6rem}
+footer{text-align:center;font-size:13px;opacity:.7;padding:20px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+
+/* phones and tablets have no hover, so show the line and the Edit/Delete buttons all the time */
+@media (hover:none){
+  .text p{max-height:5em;opacity:.95;margin-top:8px}
+  .tools{opacity:1;transform:none}
+}
+@media (max-width:560px){
+  .grid{grid-template-columns:1fr;gap:22px}
+  .card{aspect-ratio:4/5}
+  .top nav a{padding:6px 10px}
+  .top nav a.add{margin-left:2px}
+  .brand img{height:38px;max-width:140px}
+  dialog.confirm .row .btn{flex:1}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+  .intro p,.card{opacity:1 !important}
+  .stroke path{stroke-dashoffset:0 !important}
+}
+</style>
+</head>
+<body>
+<svg class="grain" aria-hidden="true"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9 .12" numOctaves="4" seed="3"/><feColorMatrix values="0 0 0 0 .55  0 0 0 0 .45  0 0 0 0 .32  0 0 0 .55 -.1"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+
+<header class="top">
+  <a class="brand" href="{% url 'lander' %}" aria-label="Rekhaa home">
+    <img src="{% get_media_prefix %}logo/logo.png" alt="Rekhaa">
+  </a>
+  <nav aria-label="Main">
+    <a href="{% url 'about' %}">About</a>
+    <a href="{% url 'category' %}" aria-current="page">Categories</a>
+    {% if user.is_authenticated  %}
+    <a class="add" href="{% url 'add_category' %}" aria-label="Add a new category">Add <span class="plus" aria-hidden="true">+</span></a>
+    {% endif %}
+  </nav>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Explore the collections</h1>
+    <svg class="stroke" viewBox="0 0 240 14" preserveAspectRatio="none" aria-hidden="true"><path pathLength="1" d="M3 8 C46 2 92 12 138 6 S210 4 237 8"/></svg>
+    <p>Each one is a quiet room of its own</p>
+  </section>
+
+  {% if categories %}
+  <section class="grid" aria-label="Art categories">
+    {% for c in categories %}
+    <article class="card">
+      <a class="hit" href="{% url 'category_detail' c.pk %}" aria-label="{{ c.title }}">
+        {% if c.cover %}
+          <img src="{{ c.cover.url }}" alt="" loading="lazy">
+        {% else %}
+          <div class="ph" aria-hidden="true">{{ c.title|slice:":1" }}</div>
+        {% endif %}
+        <span class="dot" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></svg></span>
+        <div class="text">
+          <h2>{{ c.title }}</h2>
+          {% if c.desc %}<p>{{ c.desc }}</p>{% endif %}
+        </div>
+      </a>
+
+      {% if user.is_authenticated %}
+      <div class="tools">
+        <a class="tool" href="{% url 'edit_category' c.pk %}" aria-label="Edit {{ c.title }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19.5 8.5l-4-4L4 16v4zM13.5 6.5l4 4"/></svg>
+          Edit
+        </a>
+        <button class="tool danger" type="button" data-delete="{% url 'delete_category' c.pk %}" data-title="{{ c.title }}" aria-label="Delete {{ c.title }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12M10 11v5M14 11v5"/></svg>
+          Delete
+        </button>
+      </div>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </section>
+  {% else %}
+  <p class="empty">The collections are being prepared. Please visit again soon.</p>
+  {% endif %}
+</main>
+
+<footer>&copy; {% now "Y" %} Rekhaa. All paintings belong to the artist.</footer>
+
+{% if user.is_authenticated %}
+<dialog id="confirm" class="confirm" aria-labelledby="cTitle">
+  <form method="post" id="delForm">
+    {% csrf_token %}
+    <h3 id="cTitle">Delete this category?</h3>
+    <p id="cText"></p>
+    <div class="row">
+      <button class="btn" type="button" id="cCancel">Keep it</button>
+      <button class="btn primary" type="submit" id="cGo">Delete</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(function(){
+  var dlg = document.getElementById('confirm');
+  var form = document.getElementById('delForm');
+  var text = document.getElementById('cText');
+  var go = document.getElementById('cGo');
+
+  // each Delete button carries its own URL and the category name
+  document.querySelectorAll('[data-delete]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      form.action = btn.dataset.delete;
+      text.textContent = '\u201C' + btn.dataset.title + '\u201D and its cover picture will be removed for good.';
+      go.disabled = false;
+      go.textContent = 'Delete';
+      dlg.showModal();
+    });
+  });
+
+  // close with "Keep it", by clicking outside the box, or with Esc
+  document.getElementById('cCancel').addEventListener('click', function(){ dlg.close(); });
+  dlg.addEventListener('click', function(e){ if (e.target === dlg) dlg.close(); });
+
+  // stop double clicks while deleting
+  form.addEventListener('submit', function(){
+    setTimeout(function(){ go.disabled = true; go.textContent = 'Deleting...'; }, 0);
+  });
+})();
+</script>
+{% endif %}
+</body>
+</html>
