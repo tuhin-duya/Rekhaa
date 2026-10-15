@@ -98,3 +98,11 @@ LOGOUT_REDIRECT_URL = 'login'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+# User uploads must use durable object storage on Vercel.
+if os.environ.get("BLOB_READ_WRITE_TOKEN"):
+    STORAGES = {
+        "default": {"BACKEND": "Portfolio.storage.VercelBlobStorage"},
+        "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    }
