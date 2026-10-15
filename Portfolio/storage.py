@@ -36,10 +36,10 @@ class VercelBlobStorage(Storage):
             data=content.read(),
             headers={
                 "Authorization": f"Bearer {self._token()}",
-                "x-api-version": "11",
+                "x-api-version": "12",
                 "x-add-random-suffix": "1",
                 "x-vercel-blob-access": "public",
-                "x-content-type": getattr(content, "content_type", "application/octet-stream"),
+                "x-content-type": getattr(content, "content_type", None) or "application/octet-stream",
             },
             method="PUT",
         )
@@ -58,7 +58,7 @@ class VercelBlobStorage(Storage):
             headers={
                 "Authorization": f"Bearer {self._token()}",
                 "Content-Type": "application/json",
-                "x-api-version": "11",
+                "x-api-version": "12",
             },
             method="POST",
         )
